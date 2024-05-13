@@ -12,7 +12,7 @@ export class Company {
         linkDiscord,
         linkTelegram,
         companyContent, // copy about the company, formatted text
-        isActive // null and true mean active, false means not active (TODO: default dont select non actives to client)
+        // isActive // null and true mean active, false means not active (TODO: default dont select non actives to client)
     ) { 
         // this.id = id;
         this.title = title;
@@ -26,6 +26,6 @@ export class Company {
         this.linkDiscord = linkDiscord;
         this.linkTelegram = linkTelegram;
         this.companyContent = companyContent;
-        this.isActive = isActive;
+        // this.isActive = isActive;
     }
 }
