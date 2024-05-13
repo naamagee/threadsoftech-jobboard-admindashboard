@@ -1,4 +1,3 @@
-.inputStyle::after{
-    content: "\a";
-    white-space: pre;
-}
+/* * { 
+    outline: #FF0000 1px solid;
+} */
