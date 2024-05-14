@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import NewCompanyPage from "./pages/newCompany";
+import NewCompanyPage from "./pages/CompanyDataEditor";
 import './app.css';
 
 export default function App() {

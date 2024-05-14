@@ -3,6 +3,7 @@ export class Company {
         // id,
         title,
         subtitle,
+        companyLogoId,
         hqLocation,
         linkWebsite,
         linkXTwitter,
@@ -18,6 +19,7 @@ export class Company {
         // this.id = id;
         this.title = title;
         this.subtitle = subtitle;
+        this.companyLogoId = companyLogoId;
         this.hqLocation = hqLocation;
         this.linkWebsite = linkWebsite;
         this.linkXTwitter = linkXTwitter;
