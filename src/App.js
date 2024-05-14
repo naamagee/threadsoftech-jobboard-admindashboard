@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { Company } from './models/company'
-import './app.css'
+import { Company } from './models/company';
+import './app.css';
+import { collection, doc, setDoc } from "firebase/firestore"; 
+import { COMPANIES_COLLECTION_NAME, JOBS_COLLECTION_NAME } from './constants';
+import { db } from './firebase';
 
 export default function App() {
-  const [companyFormError, setCompanyFormError] = useState(''),
-   [newCompany, setNewCompany] = useState(new Company('','','','','','','','','','','','')), 
-   reqFieldMessage = 'Missing required field: ';
+  const initialCompanyObj = new Company('','','','','','','','','','','',''),
+    [companyFormError, setCompanyFormError] = useState(''),
+    [newCompany, setNewCompany] = useState(initialCompanyObj), 
+    reqFieldMessage = 'Missing required field: ';
 
   function setCompanyInputInvalid(elementId) { 
     const thisInput = document.getElementById(`company_${elementId}_input`);
@@ -16,7 +20,7 @@ export default function App() {
     }
   }
 
-  function clearInvalidInputStyle() { 
+  function clearInvalidInputStyle() {
     setCompanyFormError('');
 
     const formInputs = document.getElementsByClassName('company-input');
@@ -27,9 +31,10 @@ export default function App() {
   }
 
   function updateCompanyProperty(event) { 
-    let c = newCompany;
-    c[event.target.id.split('_')[1]] = event.target.value;
-    setNewCompany(c);
+    setNewCompany(prevState => ({
+      ...prevState,
+      [event.target.id.split('_')[1]]: event.target.value
+    }));
   }
 
   async function validateCompanyObj() { 
@@ -37,68 +42,94 @@ export default function App() {
       if (newCompany.title === '') { 
         setCompanyInputInvalid('title');
         resolve(`${reqFieldMessage} title`);
-        setCompanyFormError(`${reqFieldMessage} title`)
+        setCompanyFormError(`${reqFieldMessage} title`);
         return;
       }
 
       if (newCompany.hqLocation === '') { 
         setCompanyInputInvalid('hqLocation');
         resolve(`${reqFieldMessage} hqLocation`);
-        setCompanyFormError(`${reqFieldMessage} hqLocation`)
+        setCompanyFormError(`${reqFieldMessage} hqLocation`);
         return;
       }
 
       if (newCompany.companyContent === '') { 
         setCompanyInputInvalid('companyContent');
         resolve(`${reqFieldMessage} companyContent`);
-        setCompanyFormError(`${reqFieldMessage} companyContent`)
+        setCompanyFormError(`${reqFieldMessage} companyContent`);
         return;
       }
 
-      resolve(null)
+      resolve(null);
       return;
     })
   }
 
-  async function submitCompany() {
-    console.info('no error!', newCompany)
+  function clearCompanyForm() {
+    setNewCompany({ ...initialCompanyObj });
+    clearInvalidInputStyle();
+  }
+
+  async function submitCompany(e) {
+    e.preventDefault();
     clearInvalidInputStyle();
 
     const error = await validateCompanyObj();
 
     if (!error) { 
-      console.info('no error!', newCompany)
-      // TODO create rec in firestore ... 
+      let comp = newCompany;
+
+      Object.keys(newCompany).forEach(property => {
+        if (comp[property]) { 
+          comp[property] = comp[property].trim();
+        }
+      });
+
+      setNewCompany(comp);
+
+      const collectionRef = collection(db, COMPANIES_COLLECTION_NAME);
+
+      try { 
+        await setDoc(doc(collectionRef), Object.assign({}, newCompany));
+      }
+      catch(e) { 
+        alert(e);
+        console.error(e);
+      } finally { 
+        alert('inserted doc!');
+        clearCompanyForm();
+        // TODO: maybe stash the current data in localStorage here, incase something happpens, so there is no need to enter everythin again 
+      }
     } else { 
-      console.error(error)
+      console.error(error);
     }
   }
 
   return (
-   <div className="box">
-      <div className="grid has-2-cols">
-        <div className="card cell box">
-            <h1 className="title">Insert New Company</h1>
-            
-            {Object.keys(newCompany).map((p, i) => (
-                <div className="field" key={i}>
-                  <label className="label">{p}</label>
-                  <input id={`company_${p}_input`} defaultValue={newCompany[p]} 
-                    className="input company-input" placeholder={p} onChange={updateCompanyProperty} />
-                </div>
-            ))}
-       
-            <div>
-              <button type="submit" className="button is-primary is-pulled-right" onClick={submitCompany}>INSERT</button>
-              <button className="button is-danger is-pulled-right">CLEAR</button>
-              {companyFormError && <p className="has-text-danger">{companyFormError}</p>}
-            </div>
-        </div>
+    <div className="container" style={{ padding: 10 }}>
+      <h1 className="title">Insert New Company 💼</h1>
+      <div>
+        {Object.keys(newCompany).map((p, i) => (
+          p !== 'companyContent' ? 
+          <div className="field" key={`company_input_${i}`}>
+            <label className="label">{p}</label>
+            <input id={`company_${p}_input`} value={newCompany[p]}
+              className="input company-input" onChange={updateCompanyProperty} />
+          </div>
+          :
+          <div className="field" key={`company_input_${i}`}>
+            <label className="label">{p}</label>
+            <textarea id={`company_${p}_input`} value={newCompany[p]} rows={20}
+              className="input company-input" onChange={updateCompanyProperty} style={{ minHeight: 100 }}>
+            </textarea>
+          </div>
+        ))}
 
-        <div className="card cell">
-          ... Insert New Job TODO ...
-        </div>
+        <button type="submit" className="button is-primary is-pulled-right" onClick={submitCompany}>INSERT</button>
+        <button className="button is-danger is-pulled-right" onClick={clearCompanyForm}>CLEAR</button>
+        {companyFormError && <p className="has-text-danger">{companyFormError}</p>}
       </div>
+
     </div>
   );
 };
