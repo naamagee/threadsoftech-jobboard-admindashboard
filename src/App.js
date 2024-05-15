@@ -12,11 +12,11 @@ export default function App() {
               <h1 className="title">Dashboard Menu</h1>
               <ul>
                 {[
-                    <Link to="/new-company"> - Insert New Company</Link>,
-                    <Link to="/edit-view-companies"> - Edit/View Companies</Link>,
-                    <Link to="/new-job"> - Insert New Job</Link>,
-                    <Link to="/edit-view-jobs"> - Edit/View Jobs</Link>,
-                ].map((link, i) => (<li key={i}>{link}</li>))}
+                    <Link to="/new-company">Insert New Company</Link>,
+                    <Link to="/edit-view-companies">Edit/View Companies</Link>,
+                    <Link to="/new-job">Insert New Job</Link>,
+                    <Link to="/edit-view-jobs">Edit/View Jobs</Link>,
+                ].map((link, i) => (<li key={i}>{'-> '}{link}</li>))}
               </ul>
             </div>
           } />
