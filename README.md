@@ -10,3 +10,4 @@ dont publish, just build and use on your computer for now
  - its hosted on localhost:3000
 
 -> use the same .env used by jobboard next app, from google drive <-
+-> just make sure each var starts with REACT_APP_ , just update the file :P <->
