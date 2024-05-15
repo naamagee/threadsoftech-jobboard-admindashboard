@@ -1,14 +1,22 @@
 import { collection, doc, setDoc } from "firebase/firestore";
-import { COMPANIES_COLLECTION_NAME } from '../constants';
+import { ref, uploadBytes, getStorage } from "firebase/storage";
+import { COMPANIES_COLLECTION_NAME, STORAGE_BUCKET_LOGO_DIR } from '../constants';
 import { db } from '../firebase';
 import { Company } from '../models/company';
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function CompanyDataEditor({ editItem }) {
-    const initialCompanyObj = new Company('', '', '', '', '', '', '', '', '', '', '', ''),
+    const newLogoId = uuidv4(), 
+        [companyLogo, setCompanyLogo] = useState(),
+        [companyLogoFilename, setCompanyLogoFilename] = useState(''),
+        [companyLogoGuidFilename, setCompanyLogoGuidFilename] = useState(newLogoId),
+        [companyLogoFiletype, setCompanyLogoFiletype] = useState(''),
+        initialCompanyObj = new Company('', '', newLogoId, '', '', '', '', '', '', '', '', '', ''),
         [companyFormError, setCompanyFormError] = useState(''),
         [companyObject, setCompanyObject] = useState(editItem ? editItem : initialCompanyObj),
+        [hasUpdatedCompanyLogo, setHasUpdatedCompanyLogo] = useState(false),
         reqFieldMessage = 'Missing required field: ',
         navigate = useNavigate();
 
@@ -61,13 +69,33 @@ export default function CompanyDataEditor({ editItem }) {
                 return;
             }
 
+            if (!companyLogo) { 
+                setCompanyInputInvalid('logo');
+                resolve(`${reqFieldMessage} logo`);
+                setCompanyFormError(`${reqFieldMessage} logo`);
+                return;
+            }
+
             resolve(null);
             return;
         })
     }
 
+    function handleFileInputChange(e) {
+        setHasUpdatedCompanyLogo(true);
+        setCompanyLogoFilename(e.target.files[0].name);
+        setCompanyLogoGuidFilename(`${companyLogoGuidFilename}.${e.target.files[0].type.replace(/(.*)\//g, '')}`);
+        setCompanyObject(prevState => ({
+            ...prevState,
+            ['companyLogoId']: `${companyLogoGuidFilename}.${e.target.files[0].type.replace(/(.*)\//g, '')}`
+        }));
+        setCompanyLogoFiletype(e.target.files[0].type);
+        setCompanyLogo(e.target.files[0]);
+    }
+    
     function clearCompanyForm() {
         setCompanyObject({ ...initialCompanyObj });
+        setCompanyLogo(null)
         clearInvalidInputStyle();
     }
 
@@ -79,7 +107,7 @@ export default function CompanyDataEditor({ editItem }) {
 
         if (!error) {
             let comp = companyObject;
-
+            comp.companyLogoId = companyLogoGuidFilename;
             Object.keys(companyObject).forEach(property => {
                 if (comp[property]) {
                     comp[property] = comp[property].trim();
@@ -88,10 +116,19 @@ export default function CompanyDataEditor({ editItem }) {
 
             setCompanyObject(comp);
 
-            const collectionRef = collection(db, COMPANIES_COLLECTION_NAME);
+            const storage = getStorage(),
+                collectionRef = collection(db, COMPANIES_COLLECTION_NAME),
+                storageRef = ref(storage, `${STORAGE_BUCKET_LOGO_DIR}${companyLogoGuidFilename}`);
 
             if (!editItem) { 
                 try {
+                    async function fileUpload() { 
+                        uploadBytes(storageRef, companyLogo, {
+                            contentType: companyLogoFiletype,
+                          });
+                    }
+                   
+                    await fileUpload();
                     await setDoc(doc(collectionRef), Object.assign({}, companyObject));
                 }
                 catch (e) {
@@ -102,8 +139,11 @@ export default function CompanyDataEditor({ editItem }) {
                     clearCompanyForm();
                     navigate('/');
                 }
-            } else { 
+            } else { // TODO
                 try {
+                    if (hasUpdatedCompanyLogo) { 
+                         // update it 
+                    }
                     //await setDoc(doc(collectionRef), Object.assign({}, companyObject));
                 }
                 catch (e) {
@@ -123,23 +163,38 @@ export default function CompanyDataEditor({ editItem }) {
 
     return (
         <div className="container" style={{ padding: 10 }}>
+            <Link to={editItem ? '/edit-view-companies' : '/' }>{'<- '}Back</Link>
             <h1 className="title">Insert New Company 💼</h1>
             <div>
                 {Object.keys(companyObject).map((p, i) => (
-                    p !== 'companyContent' ?
+                    p !== 'companyContent' && (
                         <div className="field" key={`company_input_${i}`}>
                             <label className="label">{p}</label>
-                            <input id={`company_${p}_input`} value={companyObject[p]}
+                            <input id={`company_${p}_input`} value={companyObject[p]} disabled={p === 'companyLogoId'} // TODO make list of disabled fields 
                                 className="input company-input" onChange={updateCompanyProperty} />
                         </div>
-                        :
-                        <div className="field" key={`company_input_${i}`}>
-                            <label className="label">{p}</label>
-                            <textarea id={`company_${p}_input`} value={companyObject[p]} rows={20}
-                                className="input company-input" onChange={updateCompanyProperty} style={{ minHeight: 100 }}>
-                            </textarea>
-                        </div>
-                ))}
+                )))}
+
+                <div className="field">
+                    <label className="label">companyContent</label>
+                    <textarea id={`company_companyContent_input`} value={companyObject.companyContent} rows={20}
+                        className="input company-input" onChange={updateCompanyProperty} style={{ minHeight: 100 }}>
+                    </textarea>
+                </div>
+
+                <div className="file has-name">
+                    <label className="file-label">
+                        <input id={'company_logo_input'} type="file" onChange={handleFileInputChange}
+                          accept="image/*" className="file-input company-input" />
+                        <span className="file-cta">
+                        <span className="file-icon">
+                            <i className="fas fa-upload"></i>
+                        </span>
+                        <span className="file-label"> Choose a file… </span>
+                        </span>
+                        <span className="file-name">{companyLogoFilename}</span>
+                    </label>
+                </div>
 
                 <button type="submit" className="button is-primary is-pulled-right" onClick={submitCompany}>INSERT</button>
                 <button className="button is-danger is-pulled-right" onClick={clearCompanyForm}>CLEAR</button>
