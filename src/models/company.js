@@ -1,9 +1,9 @@
 export class Company { 
     constructor(
-        // id,
+        // id
         title,
         subtitle,
-        companyLogoId,
+        companyLogoId = null,
         hqLocation,
         linkWebsite,
         linkXTwitter,
@@ -14,7 +14,7 @@ export class Company {
         linkDiscord,
         linkTelegram,
         companyContent,
-        // isActive
+        // isActive = true
     ) { 
         // this.id = id;
         this.title = title;

@@ -3,12 +3,13 @@ import { ref, uploadBytes, getStorage } from "firebase/storage";
 import { COMPANIES_COLLECTION_NAME, STORAGE_BUCKET_LOGO_DIR } from '../constants';
 import { db } from '../firebase';
 import { Company } from '../models/company';
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
-export default function CompanyDataEditor({ editItem }) {
+export default function CompanyDataEditor() {
     const newLogoId = uuidv4(), 
+        location = useLocation(), { editItem } = location.state ?? null, 
         [companyLogo, setCompanyLogo] = useState(),
         [companyLogoFilename, setCompanyLogoFilename] = useState(''),
         [companyLogoGuidFilename, setCompanyLogoGuidFilename] = useState(newLogoId),
@@ -161,11 +162,25 @@ export default function CompanyDataEditor({ editItem }) {
         }
     }
 
+    // useEffect(() => {
+    //     if (editItem) console.log(editItem);
+    // }, []);
+
     return (
         <div className="container" style={{ padding: 10 }}>
             <Link to={editItem ? '/edit-view-companies' : '/' }>{'<- '}Back</Link>
             <h1 className="title">Insert New Company 💼</h1>
             <div>
+                {/* {companyObject.isActive && (
+                    <div className="field">
+                        <label className="checkbox">
+                        <input type="checkbox" value={companyObject.isActive} 
+                            onChange={updateCompanyProperty} />
+                            isActive
+                        </label>
+                    </div>
+                )} */}
+
                 {Object.keys(companyObject).map((p, i) => (
                     p !== 'companyContent' && (
                         <div className="field" key={`company_input_${i}`}>
