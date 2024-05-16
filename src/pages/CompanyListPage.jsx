@@ -68,7 +68,6 @@ export default function CompanyListPage() {
             <footer className="card-footer">
                 {/* <button className="card-footer-item has-text-warning" disabled>Set Inactive</button>    */}
                 <Link to={`/${APP_ROUTES_ARRAY[0].route}`} state={{ editItem: company }} className="card-footer-item has-text-primary">Edit</Link>
-                <button className="card-footer-item has-text-danger" onClick={handleDelete}>Delete</button>
             </footer>
         </div>
     );
