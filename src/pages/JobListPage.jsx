@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import { collection, query, getDocs } from "firebase/firestore";
-import { COMPANIES_COLLECTION_NAME, JOBS_COLLECTION_NAME } from '../constants';
+import { COMPANIES_COLLECTION_NAME, JOBS_COLLECTION_NAME, APP_ROUTES_ARRAY } from '../constants';
 import { Link } from "react-router-dom";
 import { db } from '../firebase';
 
@@ -83,14 +83,13 @@ export default function JobListPage()  {
                                         <td>{job.jobTitle}</td>
                                         <td>{job.postingCompanyTempName}</td>
                                         <td>{job.postedDate}</td>
-                                        <td>Link to edit item .. </td>
+                                        <td><Link to={`/${APP_ROUTES_ARRAY[2].route}`} state={{ editItem: job }}>Edit</Link></td>
                                     </tr>
                                 ))
                             )
                         )
                     }
                 </tbody>
-                {/* {companies && companies.map((comp, i) => <CompanyCard key={i} company={comp} />)} */}
             </table>
         </div>
     )
