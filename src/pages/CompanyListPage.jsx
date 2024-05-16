@@ -45,7 +45,7 @@ export default function CompanyListPage() {
         }
     }, []);
 
-    const CompanyCard = ({ company }) => company && (
+    const CompanyCard = ({ company }) => (
         <div className="card">
             <div className="card-content">
                 <div className="media">
@@ -78,9 +78,7 @@ export default function CompanyListPage() {
             <h1 className="title">View/Edit Companies</h1>
 
             <div>
-                {companies &&
-                    companies.map((comp, i) => <CompanyCard key={i} company={comp} />
-                    )}
+                {companies && companies.map((comp, i) => <CompanyCard key={i} company={comp} />)}
             </div>
         </div>
     )

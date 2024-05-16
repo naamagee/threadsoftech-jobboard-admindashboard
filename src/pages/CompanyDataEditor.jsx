@@ -2,24 +2,22 @@ import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getStorage } from "firebase/storage";
 import { COMPANIES_COLLECTION_NAME, STORAGE_BUCKET_LOGO_DIR } from '../constants';
 import { db } from '../firebase';
-import { Company } from '../models/company';
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
 export default function CompanyDataEditor() {
-    const newLogoId = uuidv4(), 
-        location = useLocation(), { editItem } = location.state ?? null, 
+    const newLogoId = uuidv4(), location = useLocation(),
+        navigate = useNavigate(), editItem = location.state ?? null,
         [companyLogo, setCompanyLogo] = useState(),
         [companyLogoFilename, setCompanyLogoFilename] = useState(''),
         [companyLogoGuidFilename, setCompanyLogoGuidFilename] = useState(newLogoId),
         [companyLogoFiletype, setCompanyLogoFiletype] = useState(''),
-        initialCompanyObj = new Company('', '', newLogoId, '', '', '', '', '', '', '', '', '', ''),
+        initialCompanyObj = {},
         [companyFormError, setCompanyFormError] = useState(''),
-        [companyObject, setCompanyObject] = useState(editItem ? editItem : initialCompanyObj),
+        [companyObject, setCompanyObject] = useState(initialCompanyObj),
         [hasUpdatedCompanyLogo, setHasUpdatedCompanyLogo] = useState(false),
-        reqFieldMessage = 'Missing required field: ',
-        navigate = useNavigate();
+        reqFieldMessage = 'Missing required field: ';
 
     function setCompanyInputInvalid(elementId) {
         const thisInput = document.getElementById(`company_${elementId}_input`);
@@ -162,37 +160,46 @@ export default function CompanyDataEditor() {
         }
     }
 
-    // useEffect(() => {
-    //     if (editItem) console.log(editItem);
-    // }, []);
+    useEffect(() => {
+        if (editItem) { 
+            setCompanyObject(editItem.editItem);
+        }
+    }, []);
 
     return (
         <div className="container" style={{ padding: 10 }}>
             <Link to={editItem ? '/edit-view-companies' : '/' }>{'<- '}Back</Link>
             <h1 className="title">Insert New Company 💼</h1>
+  
             <div>
-                {/* {companyObject.isActive && (
-                    <div className="field">
-                        <label className="checkbox">
-                        <input type="checkbox" value={companyObject.isActive} 
-                            onChange={updateCompanyProperty} />
-                            isActive
-                        </label>
-                    </div>
-                )} */}
+                <div className="field">
+                    <label className="label">id: {companyObject.id ?? '...'}</label>
+                </div>
 
-                {Object.keys(companyObject).map((p, i) => (
-                    p !== 'companyContent' && (
-                        <div className="field" key={`company_input_${i}`}>
-                            <label className="label">{p}</label>
-                            <input id={`company_${p}_input`} value={companyObject[p]} disabled={p === 'companyLogoId'} // TODO make list of disabled fields 
-                                className="input company-input" onChange={updateCompanyProperty} />
-                        </div>
-                )))}
+                {/* <div className="field">
+                    <label className="checkbox">
+                    <input type="checkbox" value={companyObject.isActive || companyObject.isActive  == null} 
+                        onChange={updateCompanyProperty} id={`company_isActive_input`} />
+                        isActive
+                    </label>
+                </div> */}
+
+                {[
+                   'title', 'subtitle', 'hqLocation',
+                   'linkWebsite', 'linkXTwitter', 'linkTikTok',
+                   'linkInsta', 'linkFacebook', 'linkLinkedin',
+                   'linkDiscord', 'linkTelegram',
+                ].map((p, i) => (
+                    <div className="field" key={`company_input_${i}`}>
+                        <label className="label">{p}</label>
+                        <input id={`company_${p}_input`} value={companyObject[p]}
+                            className="input company-input" onChange={updateCompanyProperty} />
+                    </div>
+                ))}
 
                 <div className="field">
                     <label className="label">companyContent</label>
-                    <textarea id={`company_companyContent_input`} value={companyObject.companyContent} rows={20}
+                    <textarea id={`company_companyContent_input`} value={companyObject.companyContent} rows={25}
                         className="input company-input" onChange={updateCompanyProperty} style={{ minHeight: 100 }}>
                     </textarea>
                 </div>
@@ -215,6 +222,7 @@ export default function CompanyDataEditor() {
                 <button className="button is-danger is-pulled-right" onClick={clearCompanyForm}>CLEAR</button>
                 {companyFormError && <p className="has-text-danger">{companyFormError}</p>}
             </div>
+
         </div>
     )
 }
