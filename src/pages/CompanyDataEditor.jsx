@@ -112,8 +112,10 @@ export default function CompanyDataEditor() {
             }
 
             Object.keys(companyObject).forEach(property => {
-                if (comp[property]) {
-                    comp[property] = comp[property].trim();
+                if (property != 'isActive') { 
+                    if (comp[property]) {
+                        comp[property] = comp[property].trim();
+                    }
                 }
             });
 
@@ -171,8 +173,19 @@ export default function CompanyDataEditor() {
         }
     }
 
+    function handleCheckboxChange(event)  {
+        setCompanyObject(prevState => ({
+            ...prevState,
+            ['isActive']: event.target.checked
+        }));
+    }
+
     useEffect(() => {
         if (editItem) { 
+            let editing = editItem.editItem;
+            if (editing.isActive === undefined) { 
+                editing.isActive = true;
+            }
             setCompanyObject(editItem.editItem);
         }
     }, []);
@@ -180,20 +193,23 @@ export default function CompanyDataEditor() {
     return (
         <div className="container" style={{ padding: 10 }}>
             <Link to={editItem ? '/edit-view-companies' : '/' }>{'<- '}Back</Link>
-            <h1 className="title">Insert New Company 💼</h1>
+            <h1 className="title">
+                {editItem ? `Update ${editItem.editItem.title}` : 'Insert New Company 💼'}
+            </h1>
   
             <div>
                 <div className="field">
                     <label className="label">id: {companyObject.id ?? '...'}</label>
                 </div>
 
-                {/* <div className="field">
+                <div className="field">
                     <label className="checkbox">
-                    <input type="checkbox" value={companyObject.isActive || companyObject.isActive  == null} 
-                        onChange={updateCompanyProperty} id={`company_isActive_input`} />
+                    <input type="checkbox" 
+                        checked={companyObject.isActive == true} 
+                        onChange={handleCheckboxChange} id={`company_isActive_input`} />
                         isActive
                     </label>
-                </div> */}
+                </div>
 
                 {[
                    'title', 'subtitle', 'hqLocation',
