@@ -112,11 +112,14 @@ export default function CompanyDataEditor() {
             }
 
             Object.keys(companyObject).forEach(property => {
-                if (property != 'isActive') { 
-                    if (comp[property]) {
-                        comp[property] = comp[property].trim();
+                try { 
+                    let t = typeof property;
+                    if (t === 'string') {
+                        if (comp[property]) {
+                            comp[property] = comp[property].trim();
+                        }
                     }
-                }
+                } catch { }
             });
 
             setCompanyObject(comp);
@@ -245,9 +248,14 @@ export default function CompanyDataEditor() {
                     </label>
                 </div>
 
-                <button type="submit" className="button is-primary is-pulled-right" onClick={submitCompany}>{editItem ? 'UPDATE' : 'INSERT'}</button>
-                <button className="button is-danger is-pulled-right" onClick={clearCompanyForm}>CLEAR</button>
-                {companyFormError && <p className="has-text-danger">{companyFormError}</p>}
+                <div>
+                    {companyFormError && <p className="has-text-danger">{companyFormError}</p>}
+
+                    <span className="is-pulled-right">
+                    <button className="button is-danger" onClick={clearCompanyForm}>CLEAR</button>{' '}
+                        <button type="submit" className="button is-primary" onClick={submitCompany}>{editItem ? 'UPDATE' : 'INSERT'}</button>
+                    </span>
+                </div>
             </div>
 
         </div>
