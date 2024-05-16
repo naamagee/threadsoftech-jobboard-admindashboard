@@ -98,6 +98,10 @@ export default function JobDataEditor() {
                 } catch {}
             });
 
+            try { 
+                delete job.postingCompanyTempName
+            } catch {}
+
             setJobObject(job);
 
             if (!editItem) {
@@ -172,7 +176,7 @@ export default function JobDataEditor() {
             hasFetchedData.current = true;
         }
 
-        if (editItem) {
+        if (editItem) {console.log(editItem)
             let editing = editItem.editItem;
             if (editing.isActive === undefined) {
                 editing.isActive = true;
@@ -185,7 +189,7 @@ export default function JobDataEditor() {
         <div className="container" style={{ padding: 10 }}>
             <Link to={editItem ? '/edit-view-jobs' : '/'}>{'<- '}Back</Link>
             <h1 className="title">
-                {editItem ? `Update ${editItem.editItem.title}` : 'Insert New Job 👔'}
+                {editItem ? `Update "${editItem.editItem.jobTitle}" at ${editItem.editItem.postingCompanyTempName}` : 'Insert New Job 👔'}
             </h1>
 
             <div>
@@ -199,7 +203,7 @@ export default function JobDataEditor() {
                             <option value={0}>Posting Company...</option>
                             {companies && (
                                 companies.map((comp, i) => (
-                                    <option key={i} value={comp.id}>
+                                    <option key={i} value={comp.id} selected={jobObject.postingCompanyId == comp.id}>
                                         {comp.title}
                                     </option>
                                 )))}
