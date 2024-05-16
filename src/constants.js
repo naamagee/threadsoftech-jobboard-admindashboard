@@ -1,4 +1,4 @@
-import { CompanyDataEditor, CompanyListPage } from "./pages";
+import { CompanyDataEditor, CompanyListPage, JobDataEditor, JobListPage } from "./pages";
 import PRT from './models/prt'
 
 export const JOBS_COLLECTION_NAME = 'jobs';
@@ -7,6 +7,6 @@ export const STORAGE_BUCKET_LOGO_DIR = 'logos/';
 export const APP_ROUTES_ARRAY = [
     new PRT(<CompanyDataEditor />, 'company-editor', 'Insert New Company'),
     new PRT(<CompanyListPage />, 'edit-view-companies', 'Edit/View Companies'),
-    new PRT(() => <>new page here</>, 'job-editor', 'Insert New Job'),
-    new PRT(() => <>new page here</>, 'edit-view-jobs', 'Edit/View Jobs')
+    new PRT(<JobDataEditor />, 'job-editor', 'Insert New Job'),
+    new PRT(<JobListPage />, 'edit-view-jobs', 'Edit/View Jobs')
 ];
