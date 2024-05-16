@@ -1,4 +1,4 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getStorage } from "firebase/storage";
 import { COMPANIES_COLLECTION_NAME, STORAGE_BUCKET_LOGO_DIR } from '../constants';
 import { db } from '../firebase';
@@ -68,7 +68,7 @@ export default function CompanyDataEditor() {
                 return;
             }
 
-            if (!companyLogo) { 
+            if (!companyLogo && !editItem) { 
                 setCompanyInputInvalid('logo');
                 resolve(`${reqFieldMessage} logo`);
                 setCompanyFormError(`${reqFieldMessage} logo`);
@@ -106,7 +106,11 @@ export default function CompanyDataEditor() {
 
         if (!error) {
             let comp = companyObject;
-            comp.companyLogoId = companyLogoGuidFilename;
+
+            if (!editItem) { 
+                comp.companyLogoId = companyLogoGuidFilename;
+            }
+
             Object.keys(companyObject).forEach(property => {
                 if (comp[property]) {
                     comp[property] = comp[property].trim();
@@ -138,20 +142,27 @@ export default function CompanyDataEditor() {
                     clearCompanyForm();
                     navigate('/');
                 }
-            } else { // TODO
+            } else {
                 try {
                     if (hasUpdatedCompanyLogo) { 
-                         // update it 
+                        async function fileUpload() { 
+                            uploadBytes(storageRef, companyLogo, {
+                                contentType: companyLogoFiletype,
+                              });
+                        }
+                       
+                        await fileUpload();
                     }
-                    //await setDoc(doc(collectionRef), Object.assign({}, companyObject));
+
+                    await updateDoc(doc(db, COMPANIES_COLLECTION_NAME, companyObject.id), companyObject)
                 }
                 catch (e) {
-                    // alert(e);
-                    // console.error(e);
+                    alert(e);
+                    console.error(e);
                 } finally {
-                    // alert('updated doc!');
-                    // clearCompanyForm();
-                    // navigate('/edit-view-companies');
+                    alert('updated doc!');
+                    clearCompanyForm();
+                    navigate('/edit-view-companies');
                 }
             }
            
@@ -218,7 +229,7 @@ export default function CompanyDataEditor() {
                     </label>
                 </div>
 
-                <button type="submit" className="button is-primary is-pulled-right" onClick={submitCompany}>INSERT</button>
+                <button type="submit" className="button is-primary is-pulled-right" onClick={submitCompany}>{editItem ? 'UPDATE' : 'INSERT'}</button>
                 <button className="button is-danger is-pulled-right" onClick={clearCompanyForm}>CLEAR</button>
                 {companyFormError && <p className="has-text-danger">{companyFormError}</p>}
             </div>

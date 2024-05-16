@@ -29,13 +29,15 @@ export default function CompanyListPage() {
         const storage = getStorage(), [url, setUrl] = useState('');
 
         useEffect(() => {
-            getDownloadURL(ref(storage, `${STORAGE_BUCKET_LOGO_DIR}${filename}`))
-            .then((url) => {
-                setUrl(url);
-            });
+            if (filename) { 
+                getDownloadURL(ref(storage, `${STORAGE_BUCKET_LOGO_DIR}${filename}`))
+                    .then((url) => {
+                        setUrl(url);
+                    });
+            }
         }, [url]);
 
-        return <img src={url} />;
+        return filename ? <img src={url} /> : <img />;
     };
 
     useEffect(() => {
