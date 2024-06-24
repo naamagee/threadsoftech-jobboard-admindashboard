@@ -124,6 +124,8 @@ export default function JobDataEditor() {
                 job.tags = selectedTags.join(',');
             }
 
+            job.postedDate = String(job.postedDate)
+
             Object.keys(job).forEach(property => {
                 try { 
                     let t = typeof property;
@@ -191,12 +193,10 @@ export default function JobDataEditor() {
     }
 
     function handleUpdatePosteddate(date) { 
-        if (date) {
-            setJobObject(prevState => ({
-                ...prevState,
-                ['postedDate']: date
-            }));
-        }
+        setJobObject(prevState => ({
+            ...prevState,
+            ['postedDate']: date.toDateString()
+        }));
     }
 
     async function getCompanies() {
@@ -260,6 +260,9 @@ export default function JobDataEditor() {
             if (editing.isActive === undefined) {
                 editing.isActive = true;
             }
+console.log(editing.postedDate, Date(editing.postedDate))
+            editing.postedDate = Date(editing.postedDate)
+
             setJobObject(editItem.editItem);
             let loadedTags = editing.tags?.split(',')
             if (loadedTags) { 
@@ -287,11 +290,12 @@ export default function JobDataEditor() {
                 </div>
 
                 <div className="field">
+                    <label className="label">posting company</label>
                     <div className="select">
                         <select onChange={handleSelectChanged}>
-                            <option value={0}>Posting Company...</option>
+                            <option> </option>
                             {companies && (
-                                companies.map((comp, i) => (
+                                companies.map((comp, i) => (        
                                     <option key={i} value={comp.id} selected={jobObject.postingCompanyId == comp.id}>
                                         {comp.title}
                                     </option>
@@ -338,14 +342,15 @@ export default function JobDataEditor() {
                 {['jobTitle', 'shortDescription','applicationLinks','salary',].map((p, i) => (
                     <div className="field" key={`job_input_${i}`}>
                         <label className="label">{p}</label>
-                        <input id={`cjob_${p}_input`} value={jobObject[p]}
+                        <input id={`job_${p}_input`} value={jobObject[p]}
                             className="input job-input" onChange={updateProperty} />
                     </div>
                 ))}
 
                 <div className="field">
                     <label className="label">posted date</label>
-                    <DatePicker selected={Date()} onChange={handleUpdatePosteddate} className="input" value={jobObject.postedDate} />
+                    <DatePicker selected={jobObject.postedDate} onSelect={handleUpdatePosteddate} 
+                        className="input" dateFormat="MM/dd/YYYY" />
                 </div>
 
                 <div className="field">

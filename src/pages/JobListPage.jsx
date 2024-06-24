@@ -66,10 +66,9 @@ export default function JobListPage()  {
             <table className="table">
                 <thead>
                     <tr>
-                        {['job id', 'job title', 'posting company', 'posted date'].map((h, i) => (
+                        {['job id', 'job title', 'posting company', 'posted date', ''].map((h, i) => (
                             <th key={i}>{h}</th>
                         ))}
-                        <th></th>
                     </tr>
                 </thead>
 
@@ -82,7 +81,7 @@ export default function JobListPage()  {
                                         <td>{job.id}</td>
                                         <td>{job.jobTitle}</td>
                                         <td>{job.postingCompanyTempName}</td>
-                                        <td>{job.postedDate}</td>
+                                        <td>{String(job.postedDate)}</td>
                                         <td><Link to={`/${APP_ROUTES_ARRAY[2].route}`} state={{ editItem: job }}>Edit</Link></td>
                                     </tr>
                                 ))
