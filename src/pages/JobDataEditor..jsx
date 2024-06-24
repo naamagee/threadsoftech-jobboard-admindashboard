@@ -4,6 +4,8 @@ import { db } from '../firebase';
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Select from 'react-select';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function JobDataEditor() {
     const location = useLocation(), hasFetchedData = useRef(false),
@@ -51,6 +53,7 @@ export default function JobDataEditor() {
                 setInputInvalid('jobTitle');
                 resolve(`${reqFieldMessage} jobTitle`);
                 setFormError(`${reqFieldMessage} jobTitle`);
+                resolve('jobTitle');
                 return;
             }
 
@@ -58,6 +61,23 @@ export default function JobDataEditor() {
                 setInputInvalid('applicationLinks');
                 resolve(`${reqFieldMessage} applicationLinks`);
                 setFormError(`${reqFieldMessage} applicationLinks`);
+                resolve('applicationLinks');
+                return;
+            }
+
+            if (jobObject.locationType === '') {
+                setInputInvalid('locationType');
+                resolve(`${reqFieldMessage} locationType`);
+                setFormError(`${reqFieldMessage} locationType`);
+                resolve('locationType')
+                return;
+            }
+
+            if (jobObject.jobType === '') {
+                setInputInvalid('jobType');
+                resolve(`${reqFieldMessage} jobType`);
+                setFormError(`${reqFieldMessage} jobType`);
+                resolve('jobType')
                 return;
             }
 
@@ -65,6 +85,7 @@ export default function JobDataEditor() {
                 setInputInvalid('tags');
                 resolve(`${reqFieldMessage} tags`);
                 setFormError(`${reqFieldMessage} tags`);
+                resolve('tags');
                 return;
             }
 
@@ -72,6 +93,7 @@ export default function JobDataEditor() {
                 setInputInvalid('postContent');
                 resolve(`${reqFieldMessage} postContent`);
                 setFormError(`${reqFieldMessage} postContent`);
+                resolve('postContent');
                 return;
             }
 
@@ -168,6 +190,15 @@ export default function JobDataEditor() {
         setTags(tags);
     }
 
+    function handleUpdatePosteddate(date) { 
+        if (date) {
+            setJobObject(prevState => ({
+                ...prevState,
+                ['postedDate']: date
+            }));
+        }
+    }
+
     async function getCompanies() {
         try {
             setCompanies(prev => []);
@@ -192,6 +223,28 @@ export default function JobDataEditor() {
             setJobObject(prevState => ({
                 ...prevState,
                 ['postingCompanyId']: selectedVal
+            }));
+        }
+    }
+
+    function handleSelectLocationtypeChanged(event) {
+        const selectedVal = event.target.value;
+
+        if (selectedVal !== 0) {
+            setJobObject(prevState => ({
+                ...prevState,
+                ['locationType']: selectedVal
+            }));
+        }
+    }
+
+    function handleSelectJobtypeChanged(event) {
+        const selectedVal = event.target.value;
+
+        if (selectedVal !== 0) {
+            setJobObject(prevState => ({
+                ...prevState,
+                ['jobType']: selectedVal
             }));
         }
     }
@@ -257,46 +310,43 @@ export default function JobDataEditor() {
                 </div>
 
                 <div className="field">
-                    {['isRemote', 'isHybrid', 'isOnsite'].map((jobType, i) => (
-                        <label className="checkbox" style={{ marginRight: 10 }} key={i}>
-                            <input key={i} type="checkbox"
-                                checked={jobObject[jobType] == true}
-                                onChange={handleCheckboxChange} id={`job_${jobType}_input`} />
-                            &nbsp;{jobType}
-                        </label>
-                    ))}
+                    <label className="label">location type</label>
+                    <div className="select">
+                        <select value={jobObject.locationType} id={`job_locationType_input`} onChange={handleSelectLocationtypeChanged}>
+                            {['', 'Remote', 'Hybrid', 'Onsite'].map((loc, i) => (
+                                <option value={loc} key={i}>
+                                    {loc}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 <div className="field">
-                    {['isContract', 'isSalary'].map((jobType, i) => (
-                        <label className="checkbox" style={{ marginRight: 10 }} key={i}>
-                            <input type="checkbox"
-                                checked={jobObject[jobType] == true}
-                                onChange={handleCheckboxChange} id={`job_${jobType}_input`} />
-                            &nbsp;{jobType}
-                        </label>
-                    ))}
+                    <label className="label">job type</label>   
+                    <div className="select">
+                        <select value={jobObject.jobType} id={`job_jobType_input`} onChange={handleSelectJobtypeChanged}>
+                            {['', 'Contract', 'Salary', 'Internship'].map((jt, i) => (
+                                <option value={jt} key={i}>
+                                    {jt}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
-                <div className="field">
-                    <label className="checkbox">
-                        <input type="checkbox"
-                            checked={jobObject.isInternship == true}
-                            onChange={handleCheckboxChange} id={`job_isInternship_input`} />
-                        isInternship
-                    </label>
-                </div>
-
-                {[
-                    'jobTitle', 'shortDescription', 'postedDate',
-                    'applicationLinks','yearlySalary', 'hourlySalary'
-                ].map((p, i) => (
+                {['jobTitle', 'shortDescription','applicationLinks','salary',].map((p, i) => (
                     <div className="field" key={`job_input_${i}`}>
                         <label className="label">{p}</label>
                         <input id={`cjob_${p}_input`} value={jobObject[p]}
                             className="input job-input" onChange={updateProperty} />
                     </div>
                 ))}
+
+                <div className="field">
+                    <label className="label">posted date</label>
+                    <DatePicker selected={Date()} onChange={handleUpdatePosteddate} className="input" value={jobObject.postedDate} />
+                </div>
 
                 <div className="field">
                     <label className="label">tags</label>
