@@ -3,6 +3,7 @@ import { JOBS_COLLECTION_NAME, COMPANIES_COLLECTION_NAME } from '../constants';
 import { db } from '../firebase';
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import Select from 'react-select';
 
 export default function JobDataEditor() {
     const location = useLocation(), hasFetchedData = useRef(false),
@@ -10,7 +11,13 @@ export default function JobDataEditor() {
         initialJobObj = {}, [formError, setFormError] = useState(''),
         [jobObject, setJobObject] = useState(initialJobObj),
         [companies, setCompanies] = useState([]),
-        reqFieldMessage = 'Missing required field: ';
+        reqFieldMessage = 'Missing required field: ',
+        [tags, setTags] = useState(),
+        multiSelectTagsOps = [
+            { label: 'Engineering', value: 'Engineering' }, { label: 'Design', value: 'Design' },
+            { label: 'Product Management', value: 'Product Management' }, { label: 'Marketing', value: 'Marketing' },
+            { label: 'Operations', value: 'Operations' }, { label: 'Sales', value: 'Sales' }, { label: 'Data', value: 'Data' },
+        ];
 
     function setInputInvalid(elementId) {
         const thisInput = document.getElementById(`job_${elementId}_input`);
@@ -87,6 +94,14 @@ export default function JobDataEditor() {
         if (!error) {
             let job = jobObject;
 
+            if (tags) {
+                let selectedTags = []
+                tags.forEach(t => {
+                    selectedTags.push(t.value)
+                })
+                job.tags = selectedTags.join(',');
+            }
+
             Object.keys(job).forEach(property => {
                 try { 
                     let t = typeof property;
@@ -142,6 +157,17 @@ export default function JobDataEditor() {
         }));
     }
 
+    function handleTagsSelectChange(event) {
+        let tags = [];
+        if (event.length > 0) {
+            event.forEach(i => {
+                tags.push(i);
+            })
+        }
+
+        setTags(tags);
+    }
+
     async function getCompanies() {
         try {
             setCompanies(prev => []);
@@ -176,12 +202,22 @@ export default function JobDataEditor() {
             hasFetchedData.current = true;
         }
 
-        if (editItem) {console.log(editItem)
+        if (editItem) {
             let editing = editItem.editItem;
             if (editing.isActive === undefined) {
                 editing.isActive = true;
             }
             setJobObject(editItem.editItem);
+            let loadedTags = editing.tags?.split(',')
+            if (loadedTags) { 
+                let selectTagsOptions = []
+                loadedTags.forEach(t => {
+                    let tagOption = multiSelectTagsOps.find(m => m.value == t)
+                    selectTagsOptions.push(tagOption)
+                })
+
+                setTags(selectTagsOptions)
+            }
         }
     }, []);
 
@@ -253,7 +289,7 @@ export default function JobDataEditor() {
 
                 {[
                     'jobTitle', 'shortDescription', 'postedDate',
-                    'applicationLinks','yearlySalary', 'hourlySalary', 'tags',
+                    'applicationLinks','yearlySalary', 'hourlySalary'
                 ].map((p, i) => (
                     <div className="field" key={`job_input_${i}`}>
                         <label className="label">{p}</label>
@@ -261,6 +297,11 @@ export default function JobDataEditor() {
                             className="input job-input" onChange={updateProperty} />
                     </div>
                 ))}
+
+                <div className="field">
+                    <label className="label">tags</label>
+                    <Select isMulti options={multiSelectTagsOps} onChange={handleTagsSelectChange} value={tags} />
+                </div>
 
                 <div className="field">
                     <label className="label">postContent</label>
