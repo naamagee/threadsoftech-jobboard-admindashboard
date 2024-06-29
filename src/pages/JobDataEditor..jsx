@@ -10,7 +10,20 @@ import "react-datepicker/dist/react-datepicker.css";
 export default function JobDataEditor() {
     const location = useLocation(), hasFetchedData = useRef(false),
         navigate = useNavigate(), editItem = location.state ?? null,
-        initialJobObj = {}, [formError, setFormError] = useState(''),
+        initialJobObj = {
+            'salary': '',
+            'postingCompanyId': '',
+            'jobTitle': '',
+            'postedDate': '',
+            'isActive': true,
+            'postContent': '',
+            'id': '',
+            'applicationLinks': '',
+            'tags': '',
+            'shortDescription': '',
+            'jobType': '',
+            'locationType': '',
+        }, [formError, setFormError] = useState(''),
         [jobObject, setJobObject] = useState(initialJobObj),
         [companies, setCompanies] = useState([]),
         reqFieldMessage = 'Missing required field: ',
@@ -260,7 +273,7 @@ export default function JobDataEditor() {
             if (editing.isActive === undefined) {
                 editing.isActive = true;
             }
-console.log(editing.postedDate, Date(editing.postedDate))
+
             editing.postedDate = Date(editing.postedDate)
 
             setJobObject(editItem.editItem);

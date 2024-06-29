@@ -13,7 +13,22 @@ export default function CompanyDataEditor() {
         [companyLogoFilename, setCompanyLogoFilename] = useState(''),
         [companyLogoGuidFilename, setCompanyLogoGuidFilename] = useState(newLogoId),
         [companyLogoFiletype, setCompanyLogoFiletype] = useState(''),
-        initialCompanyObj = {},
+        initialCompanyObj = {
+            'linkTikTok': '',
+            'subtitle': '',
+            'linkLinkedin': '',
+            'title': '',
+            'linkTelegram': '',
+            'linkDiscord': '',
+            'linkXTwitter': '',
+            'companyLogoId': '',
+            'linkFacebook': '',
+            'linkWebsite': '',
+            'linkInsta': '',
+            'companyContent': '',
+            'hqLocation': '',
+            'id': '',
+        },
         [companyFormError, setCompanyFormError] = useState(''),
         [companyObject, setCompanyObject] = useState(initialCompanyObj),
         [hasUpdatedCompanyLogo, setHasUpdatedCompanyLogo] = useState(false),
@@ -129,6 +144,8 @@ export default function CompanyDataEditor() {
                 storageRef = ref(storage, `${STORAGE_BUCKET_LOGO_DIR}${companyLogoGuidFilename}`);
 
             if (!editItem) { 
+                comp.isActive = true;
+
                 try {
                     async function fileUpload() { 
                         uploadBytes(storageRef, companyLogo, {
