@@ -26,7 +26,7 @@ export default function JobDataEditor({token, user}) {
         }, [formError, setFormError] = useState(''),
         [jobObject, setJobObject] = useState(initialJobObj),
         [companies, setCompanies] = useState([]),
-        reqFieldMessage = 'Missing required field: ',
+        //reqFieldMessage = 'Missing required field: ',
         [tags, setTags] = useState(),
         multiSelectTagsOps = [
             { label: 'Engineering', value: 'Engineering' }, { label: 'Design', value: 'Design' },
@@ -34,14 +34,14 @@ export default function JobDataEditor({token, user}) {
             { label: 'Operations', value: 'Operations' }, { label: 'Sales', value: 'Sales' }, { label: 'Data', value: 'Data' },
         ];
 
-    function setInputInvalid(elementId) {
-        const thisInput = document.getElementById(`job_${elementId}_input`);
+    // function setInputInvalid(elementId) {
+    //     const thisInput = document.getElementById(`job_${elementId}_input`);
 
-        if (thisInput) {
-            thisInput.focus();
-            thisInput.classList.add('is-danger');
-        }
-    }
+    //     if (thisInput) {
+    //         thisInput.focus();
+    //         thisInput.classList.add('is-danger');
+    //     }
+    // }
 
     function clearInvalidInputStyle() {
         setFormError('');
@@ -60,60 +60,60 @@ export default function JobDataEditor({token, user}) {
         }));
     }
 
-    async function validateJobObj() {
-        return new Promise(resolve => {
-            if (jobObject.jobTitle === '') {
-                setInputInvalid('jobTitle');
-                resolve(`${reqFieldMessage} jobTitle`);
-                setFormError(`${reqFieldMessage} jobTitle`);
-                resolve('jobTitle');
-                return;
-            }
+    // async function validateJobObj() {
+    //     return new Promise(resolve => {
+    //         if (jobObject.jobTitle === '') {
+    //             setInputInvalid('jobTitle');
+    //             resolve(`${reqFieldMessage} jobTitle`);
+    //             setFormError(`${reqFieldMessage} jobTitle`);
+    //             resolve('jobTitle');
+    //             return;
+    //         }
 
-            if (jobObject.applicationLinks === '') {
-                setInputInvalid('applicationLinks');
-                resolve(`${reqFieldMessage} applicationLinks`);
-                setFormError(`${reqFieldMessage} applicationLinks`);
-                resolve('applicationLinks');
-                return;
-            }
+    //         if (jobObject.applicationLinks === '') {
+    //             setInputInvalid('applicationLinks');
+    //             resolve(`${reqFieldMessage} applicationLinks`);
+    //             setFormError(`${reqFieldMessage} applicationLinks`);
+    //             resolve('applicationLinks');
+    //             return;
+    //         }
 
-            if (jobObject.locationType === '') {
-                setInputInvalid('locationType');
-                resolve(`${reqFieldMessage} locationType`);
-                setFormError(`${reqFieldMessage} locationType`);
-                resolve('locationType')
-                return;
-            }
+    //         if (jobObject.locationType === '') {
+    //             setInputInvalid('locationType');
+    //             resolve(`${reqFieldMessage} locationType`);
+    //             setFormError(`${reqFieldMessage} locationType`);
+    //             resolve('locationType')
+    //             return;
+    //         }
 
-            if (jobObject.jobType === '') {
-                setInputInvalid('jobType');
-                resolve(`${reqFieldMessage} jobType`);
-                setFormError(`${reqFieldMessage} jobType`);
-                resolve('jobType')
-                return;
-            }
+    //         if (jobObject.jobType === '') {
+    //             setInputInvalid('jobType');
+    //             resolve(`${reqFieldMessage} jobType`);
+    //             setFormError(`${reqFieldMessage} jobType`);
+    //             resolve('jobType')
+    //             return;
+    //         }
 
-            if (jobObject.tags === '') {
-                setInputInvalid('tags');
-                resolve(`${reqFieldMessage} tags`);
-                setFormError(`${reqFieldMessage} tags`);
-                resolve('tags');
-                return;
-            }
+    //         if (jobObject.tags === '') {
+    //             setInputInvalid('tags');
+    //             resolve(`${reqFieldMessage} tags`);
+    //             setFormError(`${reqFieldMessage} tags`);
+    //             resolve('tags');
+    //             return;
+    //         }
 
-            if (jobObject.postContent === '') {
-                setInputInvalid('postContent');
-                resolve(`${reqFieldMessage} postContent`);
-                setFormError(`${reqFieldMessage} postContent`);
-                resolve('postContent');
-                return;
-            }
+    //         if (jobObject.postContent === '') {
+    //             setInputInvalid('postContent');
+    //             resolve(`${reqFieldMessage} postContent`);
+    //             setFormError(`${reqFieldMessage} postContent`);
+    //             resolve('postContent');
+    //             return;
+    //         }
 
-            resolve(null);
-            return;
-        })
-    }
+    //         resolve(null);
+    //         return;
+    //     })
+    // }
 
     function clearForm() {
         setJobObject({ ...initialJobObj });
@@ -208,7 +208,7 @@ export default function JobDataEditor({token, user}) {
     function handleUpdatePosteddate(date) { 
         setJobObject(prevState => ({
             ...prevState,
-            ['postedDate']: date.toDateString()
+            'postedDate': date.toDateString()
         }));
     }
 
@@ -235,7 +235,7 @@ export default function JobDataEditor({token, user}) {
         if (selectedVal !== 0) {
             setJobObject(prevState => ({
                 ...prevState,
-                ['postingCompanyId']: selectedVal
+                'postingCompanyId': selectedVal
             }));
         }
     }
@@ -246,7 +246,7 @@ export default function JobDataEditor({token, user}) {
         if (selectedVal !== 0) {
             setJobObject(prevState => ({
                 ...prevState,
-                ['locationType']: selectedVal
+                'locationType': selectedVal
             }));
         }
     }
@@ -257,7 +257,7 @@ export default function JobDataEditor({token, user}) {
         if (selectedVal !== 0) {
             setJobObject(prevState => ({
                 ...prevState,
-                ['jobType']: selectedVal
+                'jobType': selectedVal
             }));
         }
     }
@@ -281,14 +281,14 @@ export default function JobDataEditor({token, user}) {
             if (loadedTags) { 
                 let selectTagsOptions = []
                 loadedTags.forEach(t => {
-                    let tagOption = multiSelectTagsOps.find(m => m.value == t)
+                    let tagOption = multiSelectTagsOps.find(m => m.value === t)
                     selectTagsOptions.push(tagOption)
                 })
 
                 setTags(selectTagsOptions)
             }
         }
-    }, []);
+    }, [editItem]);
 
     return (
         <div className="container" style={{ padding: 10 }}>
@@ -309,7 +309,7 @@ export default function JobDataEditor({token, user}) {
                             <option> </option>
                             {companies && (
                                 companies.map((comp, i) => (        
-                                    <option key={i} value={comp.id} selected={jobObject.postingCompanyId == comp.id}>
+                                    <option key={i} value={comp.id} selected={jobObject.postingCompanyId === comp.id}>
                                         {comp.title}
                                     </option>
                                 )))}
@@ -320,7 +320,7 @@ export default function JobDataEditor({token, user}) {
                 <div className="field">
                     <label className="checkbox">
                         <input type="checkbox"
-                            checked={jobObject.isActive == true}
+                            checked={jobObject.isActive === true}
                             onChange={handleCheckboxChange} id={`job_isActive_input`} />
                         isActive
                     </label>
