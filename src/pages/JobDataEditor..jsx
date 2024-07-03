@@ -7,7 +7,7 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function JobDataEditor() {
+export default function JobDataEditor({token, user}) {
     const location = useLocation(), hasFetchedData = useRef(false),
         navigate = useNavigate(), editItem = location.state ?? null,
         initialJobObj = {

@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
-export default function CompanyDataEditor() {
+export default function CompanyDataEditor({token, user}) {
     const newLogoId = uuidv4(), location = useLocation(),
         navigate = useNavigate(), editItem = location.state ?? null,
         [companyLogo, setCompanyLogo] = useState(),
@@ -212,6 +212,8 @@ export default function CompanyDataEditor() {
 
     return (
         <div className="container" style={{ padding: 10 }}>
+            {/* {token}
+            {user} */}
             <Link to={editItem ? '/edit-view-companies' : '/' }>{'<- '}Back</Link>
             <h1 className="title">
                 {editItem ? `Update ${editItem.editItem.title}` : 'Insert New Company 💼'}
