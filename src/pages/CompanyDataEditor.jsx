@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
-export default function CompanyDataEditor({token, user}) {
+export default function CompanyDataEditor() {
     const newLogoId = uuidv4(), location = useLocation(),
         navigate = useNavigate(), editItem = location.state ?? null,
         [companyLogo, setCompanyLogo] = useState(),
@@ -101,7 +101,7 @@ export default function CompanyDataEditor({token, user}) {
         setCompanyLogoGuidFilename(`${companyLogoGuidFilename}.${e.target.files[0].type.replace(/(.*)\//g, '')}`);
         setCompanyObject(prevState => ({
             ...prevState,
-            ['companyLogoId']: `${companyLogoGuidFilename}.${e.target.files[0].type.replace(/(.*)\//g, '')}`
+            'companyLogoId': `${companyLogoGuidFilename}.${e.target.files[0].type.replace(/(.*)\//g, '')}`
         }));
         setCompanyLogoFiletype(e.target.files[0].type);
         setCompanyLogo(e.target.files[0]);
@@ -196,7 +196,7 @@ export default function CompanyDataEditor({token, user}) {
     function handleCheckboxChange(event)  {
         setCompanyObject(prevState => ({
             ...prevState,
-            ['isActive']: event.target.checked
+            'isActive': event.target.checked
         }));
     }
 
@@ -208,12 +208,10 @@ export default function CompanyDataEditor({token, user}) {
             }
             setCompanyObject(editItem.editItem);
         }
-    }, []);
+    }, [editItem]);
 
     return (
         <div className="container" style={{ padding: 10 }}>
-            {/* {token}
-            {user} */}
             <Link to={editItem ? '/edit-view-companies' : '/' }>{'<- '}Back</Link>
             <h1 className="title">
                 {editItem ? `Update ${editItem.editItem.title}` : 'Insert New Company 💼'}
@@ -227,7 +225,7 @@ export default function CompanyDataEditor({token, user}) {
                 <div className="field">
                     <label className="checkbox">
                     <input type="checkbox" 
-                        checked={companyObject.isActive == true} 
+                        checked={companyObject.isActive === true} 
                         onChange={handleCheckboxChange} id={`company_isActive_input`} />
                         isActive
                     </label>

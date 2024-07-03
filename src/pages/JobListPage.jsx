@@ -43,7 +43,7 @@ export default function JobListPage()  {
                 if (!jobDoc.id) { 
                     jobDoc.id = doc.id;
                 }
-                jobDoc.postingCompanyTempName = comps.find(c => c.id == jobDoc.postingCompanyId)?.title;
+                jobDoc.postingCompanyTempName = comps.find(c => c.id === jobDoc.postingCompanyId)?.title;
                 setJobs(prev => [...prev, jobDoc]);
             });
         } catch (error) {

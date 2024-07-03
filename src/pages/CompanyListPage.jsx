@@ -45,7 +45,7 @@ export default function CompanyListPage() {
             getCompanies();
             hasFetchedData.current = true;
         }
-    }, []);
+    }, [hasFetchedData]);
 
     const CompanyCard = ({ company }) => (
         <div className="card">
@@ -53,7 +53,7 @@ export default function CompanyListPage() {
                 <div className="media">
                     <div className="media-left">
                         <figure className="image is-48x48">
-                            <Image filename={company.companyLogoId} />
+                            <Image filename={company.companyLogoId} alt="logo" />
                         </figure>
                     </div>
                     <div className="media-content">
