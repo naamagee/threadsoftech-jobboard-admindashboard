@@ -124,7 +124,7 @@ export default function JobDataEditor() {
         e.preventDefault();
         clearInvalidInputStyle();
 
-        const error = await validateJobObj();
+        const error = null //await validateJobObj();
 
         if (!error) {
             let job = jobObject;
