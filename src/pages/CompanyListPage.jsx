@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import { collection, query, getDocs } from "firebase/firestore";
-import { APP_ROUTES_ARRAY, COMPANIES_COLLECTION_NAME, STORAGE_BUCKET_LOGO_DIR } from '../constants';
+import { COMPANIES_COLLECTION_NAME, STORAGE_BUCKET_LOGO_DIR } from '../constants';
 import { Link } from "react-router-dom";
 import { db } from '../firebase';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
@@ -68,7 +68,7 @@ export default function CompanyListPage() {
             </div>
 
             <footer className="card-footer">
-                <Link to={`/${APP_ROUTES_ARRAY[0].route}`} state={{ editItem: company }} className="card-footer-item has-text-primary">Edit</Link>
+                <Link to={`/company-editor`} state={{ editItem: company }} className="card-footer-item has-text-primary">Edit</Link>
             </footer>
         </div>
     );
